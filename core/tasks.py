@@ -117,7 +117,10 @@ def ussd(request):
     session_id = request.POST.get("sessionId")
     serviceCode = request.POST.get("serviceCode")
     phone_number = request.POST.get("phoneNumber")
-    text = request.GET.get("text", "")
+    if request.method == "POST":
+        text = request.POST.get("text", "")
+    else:
+        text = request.GET.get("text", "")
     response = generate_response(text, phone_number)
     print("********************************")
     print("method: ", request.method)
