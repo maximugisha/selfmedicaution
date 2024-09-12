@@ -1,7 +1,8 @@
+from __future__ import print_function, absolute_import, unicode_literals
+
 import os
 from django.http import HttpResponse
 import africastalking
-from django.views.decorators.csrf import csrf_exempt
 import pickle
 
 # Create your credentials
@@ -28,52 +29,6 @@ def send(message):
         print(f"Houston, we have a problem {e}")
 
 
-@csrf_exempt
-def ussd(request):
-    session_id = request.POST.get("sessionId")
-    serviceCode = request.POST.get("serviceCode")
-    phone_number = request.POST.get("phoneNumber")
-    text = request.POST.get("text", "")
-
-    print(text)
-
-    steps = text.split('*')
-    step_count = len(steps) - 1
-
-    if step_count == 0:
-        response = "CON Welcome to Self MediCaution \n"
-        response += "Think before you Dose \n"
-        response += "1. what's the problem. end with *1 eg fever,headache*1 \n"
-    elif step_count == 1:
-        response = "CON You are likely to be suffering from Malaria \n"
-        response += "We recommend you talk to a doctor to get prescription \n"
-        response += "1. Contact Nearby doctor / Facility \n"
-    elif step_count == 2:
-        response = "CON Enter your location \n"
-        response += "To find nearby doctor / Facility \n"
-        response += "1. Enter your location \n"
-        response += "2. Skip this step"
-
-    elif step_count == 3:
-        response = "CON Near doctors \n"
-        response += "1. Dr. Morgan \n"
-        response += "2. Dr Alex \n"
-        response += "3. Dr Maximo"
-
-    elif step_count == 4:
-        response = "CON Dr. Morgan, Mulago \n"
-        response += "1. call  070336373878 \n"
-        response += "2. contact on Whatsapp.\n"
-        response += "3. email: drmorgan@gmail.com \n"
-        response += "4. Skip this step"
-    elif step_count == 5:
-        send("Patient on number 08900987 needs your services")
-        response = "END Doctor has been notified. please follow up "
-    else:
-        response = "END Invalid Selection"
-    return HttpResponse(response)
-
-
 model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'model', 'disease_model.pkl'))
 mlb_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'model', 'mlb.pkl'))
 
@@ -94,3 +49,58 @@ def predict_disease(symptoms=None):
         encoded_symptoms = mlb.transform([symptoms])
         prediction = model.predict(encoded_symptoms)
         return prediction[0]
+
+
+def generate_response(text):
+    steps = text.split('*')
+    step_count = len(steps) - 1
+
+    if step_count == 0:
+        print(steps)
+        response = "CON Welcome to Self MediCaution \n"
+        response += "Think before you Dose \n"
+        response += "1. what's the problem. end with *1 eg fever,headache*1 \n"
+    elif step_count == 1:
+        print(steps)
+        response = "CON You are likely to be suffering from Malaria \n"
+        response += "We recommend you talk to a doctor to get prescription \n"
+        response += "1. Contact Nearby doctor / Facility \n"
+    elif step_count == 2:
+        print(steps)
+        response = "CON Enter your location \n"
+        response += "To find nearby doctor / Facility \n"
+        response += "1. Enter your location \n"
+        response += "2. Skip this step"
+
+    elif step_count == 3:
+        print(steps)
+        response = "CON Near doctors \n"
+        response += "1. Dr. Morgan \n"
+        response += "2. Dr Alex \n"
+        response += "3. Dr Maximo"
+
+    elif step_count == 4:
+        print(steps)
+        response = "CON Dr. Morgan, Mulago \n"
+        response += "1. call  070336373878 \n"
+        response += "2. contact on Whatsapp.\n"
+        response += "3. email: drmorgan@gmail.com \n"
+        response += "4. Skip this step"
+    elif step_count == 5:
+        print(steps)
+        send("Patient on number 08900987 needs your services")
+        response = "END Doctor has been notified. please follow up "
+    else:
+        response = "END Invalid Selection"
+    return response
+
+
+def ussd(request):
+    session_id = request.GET.get("sessionId")
+    serviceCode = request.GET.get("serviceCode")
+    phone_number = request.GET.get("phoneNumber")
+    text = request.GET.get("text", "")
+    response = generate_response(text)
+
+    # Send the response back to the API
+    return HttpResponse(response)
