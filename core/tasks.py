@@ -62,7 +62,7 @@ def generate_response(text, phone_number):
     elif step_count == 1:
         symptoms = list(steps[0].split(","))
         symptoms = [symptom.strip().capitalize() for symptom in symptoms]
-        response = "CON" + f"You are likely to be suffering from {predict_disease(symptoms)} \n"
+        response = "CON " + f"You are likely to be suffering from {predict_disease(symptoms)} \n"
         response += "We recommend you talk to a doctor to get prescription \n"
         response += "1. Contact Nearby doctor / Facility \n"
     elif step_count == 2:
