@@ -51,44 +51,62 @@ def predict_disease(symptoms=None):
         return prediction[0]
 
 
-def generate_response(text):
+def generate_response(text, phone_number):
     steps = text.split('*')
     step_count = len(steps) - 1
 
     if step_count == 0:
-        print(steps)
         response = "CON Welcome to Self MediCaution \n"
         response += "Think before you Dose \n"
-        response += "1. what's the problem. end with *1 eg fever,headache*1 \n"
+        response += "Enter symptoms hat's the problem. eg Fever,Headache* \n"
     elif step_count == 1:
-        print(steps)
-        response = "CON You are likely to be suffering from Malaria \n"
+        symptoms = list(steps[0].split(","))
+        symptoms = [symptom.strip().capitalize() for symptom in symptoms]
+        response = "CON" + f"You are likely to be suffering from {predict_disease(symptoms)} \n"
         response += "We recommend you talk to a doctor to get prescription \n"
         response += "1. Contact Nearby doctor / Facility \n"
     elif step_count == 2:
-        print(steps)
         response = "CON Enter your location \n"
         response += "To find nearby doctor / Facility \n"
         response += "1. Enter your location \n"
-        response += "2. Skip this step"
 
     elif step_count == 3:
-        print(steps)
-        response = "CON Near doctors \n"
+        location = steps[3]
+        response = "CON " + f"doctors/ facilities around {location}  \n"
+        response += "choose by entering their ids \n"
         response += "1. Dr. Morgan \n"
         response += "2. Dr Alex \n"
         response += "3. Dr Maximo"
 
     elif step_count == 4:
-        print(steps)
-        response = "CON Dr. Morgan, Mulago \n"
-        response += "1. call  070336373878 \n"
-        response += "2. contact on Whatsapp.\n"
-        response += "3. email: drmorgan@gmail.com \n"
-        response += "4. Skip this step"
+        choice = steps[4]
+        if choice == "1":
+            doctor = "Dr. Morgan"
+            contact = "070336373878"
+            email = "drmorgan@gmail.com"
+            facility = "Norvik"
+        elif choice == "2":
+            doctor = "Dr Alex"
+            contact = "077777777777"
+            email = "dralex@gmail.com"
+            facility = "Mengo"
+        elif choice == "3":
+            doctor = "Dr Maximo"
+            contact = "088888888888"
+            email = "drmaximo@gmail.com"
+            facility = "Mulago"
+        else:
+            doctor = "Invalid Choice"
+            contact = "N/A"
+            email = "N/A"
+            facility = "N/A"
+
+        response = f"CON {doctor}, {facility} \n"
+        response += f"1. call  {contact} \n"
+        response += f"2. contact on Whatsapp.\n"
+        response += f"3. email: {email} \n"
     elif step_count == 5:
-        print(steps)
-        send("Patient on number 08900987 needs your services")
+        send(f"Patient on number {phone_number} needs your services")
         response = "END Doctor has been notified. please follow up "
     else:
         response = "END Invalid Selection"
@@ -100,7 +118,7 @@ def ussd(request):
     serviceCode = request.GET.get("serviceCode")
     phone_number = request.GET.get("phoneNumber")
     text = request.GET.get("text", "")
-    response = generate_response(text)
+    response = generate_response(text, phone_number)
 
     # Send the response back to the API
     return HttpResponse(response)
