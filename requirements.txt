@@ -1,3 +1,4 @@
 Django~=4.2.16
 africastalking
 gunicorn
+scikit-learn==1.4.1.post1

@@ -1,7 +1,8 @@
+import os
 from django.http import HttpResponse
 import africastalking
 from django.views.decorators.csrf import csrf_exempt
-
+import pickle
 
 # Create your credentials
 username = "sandbox"
@@ -73,3 +74,23 @@ def ussd(request):
     return HttpResponse(response)
 
 
+model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'model', 'disease_model.pkl'))
+mlb_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'model', 'mlb.pkl'))
+
+# Load the trained model
+with open(model_path, 'rb') as model_file:
+    model = pickle.load(model_file)
+
+# Load the MultiLabelBinarizer
+with open(mlb_path, 'rb') as mlb_file:
+    mlb = pickle.load(mlb_file)
+
+
+def predict_disease(symptoms=None):
+    if symptoms is None:
+        symptoms = []
+        return "No symptoms provided"
+    else:
+        encoded_symptoms = mlb.transform([symptoms])
+        prediction = model.predict(encoded_symptoms)
+        return prediction[0]
