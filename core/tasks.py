@@ -114,15 +114,17 @@ def generate_response(text, phone_number):
 
 
 def ussd(request):
-    session_id = request.GET.get("sessionId")
-    serviceCode = request.GET.get("serviceCode")
-    phone_number = request.GET.get("phoneNumber")
+    session_id = request.POST.get("sessionId")
+    serviceCode = request.POST.get("serviceCode")
+    phone_number = request.POST.get("phoneNumber")
     text = request.GET.get("text", "")
     response = generate_response(text, phone_number)
     print("********************************")
     print("method: ", request.method)
     print("text: ", text)
     print("phone: ", phone_number)
+    print("session_id: ", session_id)
+    print("serviceCode: ", serviceCode)
     print("********************************")
 
     # Send the response back to the API
