@@ -119,6 +119,11 @@ def ussd(request):
     phone_number = request.GET.get("phoneNumber")
     text = request.GET.get("text", "")
     response = generate_response(text, phone_number)
+    print("********************************")
+    print("method: ", request.method)
+    print("text: ", text)
+    print("phone: ", phone_number)
+    print("********************************")
 
     # Send the response back to the API
     return HttpResponse(response)
