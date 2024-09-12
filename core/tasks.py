@@ -121,6 +121,8 @@ def ussd(request):
     response = generate_response(text, phone_number)
     print("********************************")
     print("method: ", request.method)
+    print("post: ", request.POST)
+    print("get: ", request.GET)
     print("text: ", text)
     print("phone: ", phone_number)
     print("session_id: ", session_id)
