@@ -58,12 +58,12 @@ def generate_response(text, phone_number):
     if step_count == 0:
         response = "CON Welcome to Self MediCaution \n"
         response += "Think before you Dose \n"
-        response += "Enter symptoms hat's the problem. eg Fever,Headache* \n"
+        response += "Enter symptoms What's the problem. eg Fever,Headache* \n"
     elif step_count == 1:
         symptoms = list(steps[0].split(","))
         symptoms = [symptom.strip().capitalize() for symptom in symptoms]
         response = "CON " + f"You are likely to be suffering from {predict_disease(symptoms)} \n"
-        response += "We recommend you talk to a doctor to get prescription \n"
+        response += "We recommend you talk to a doctor for further diagnosis \n"
         response += "1. Contact Nearby doctor / Facility \n"
     elif step_count == 2:
         response = "CON Enter your location \n"
